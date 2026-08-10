@@ -3,19 +3,15 @@ from pathlib import Path
 
 path = Path("engine/normalizer.py")
 
-text = path.read_text()
+content = '''import hashlib
+from datetime import datetime, timezone
+from typing import Dict, Any, List
 
-# ------------------------------------------------------------
-# 1. Canonical source mapping
-# ------------------------------------------------------------
 
-anchor = '''from typing import Dict, Any, List
+# ---------------------------------------------------------------------------
+# Canonical Source Mapping
+# ---------------------------------------------------------------------------
 
-'''
-
-replacement = '''from typing import Dict, Any, List
-
-# Canonical source names used across the Intelligence Platform.
 SOURCE_ALIASES = {
     "github_trending": "github",
     "github": "github",
@@ -27,27 +23,28 @@ SOURCE_ALIASES = {
     "twitter": "twitter",
 }
 
-# Engagement normalization scale.
-# Higher values produce diminishing returns instead of immediate saturation.
+
+# ---------------------------------------------------------------------------
+# Engagement Normalization
+# ---------------------------------------------------------------------------
+
 ENGAGEMENT_SCALE = 500.0
 
-'''
 
-if anchor not in text:
-    raise SystemExit("Import bölümü bulunamadı.")
+def generate_id(source: str, title: str) -> str:
+    """
+    Source ve title değerlerinden MD5 hash üreterek benzersiz bir ID oluşturur.
+    """
+    s = str(source or "").strip()
+    t = str(title or "").strip()
+    raw_string = f"{s}_{t}"
+    return hashlib.md5(raw_string.encode("utf-8")).hexdigest()
 
-text = text.replace(anchor, replacement, 1)
 
-
-# ------------------------------------------------------------
-# 2. Add helper functions before normalize_post
-# ------------------------------------------------------------
-
-anchor = '''def normalize_post(post: Dict[str, Any]) -> Dict[str, Any]:
-'''
-
-helpers = '''def normalize_source(source: str) -> str:
-    """Convert a raw source name into the platform canonical source name."""
+def normalize_source(source: str) -> str:
+    """
+    Ham source değerini platformun canonical source adına dönüştürür.
+    """
     value = str(source or "").strip().lower()
 
     if not value:
@@ -58,10 +55,10 @@ helpers = '''def normalize_source(source: str) -> str:
 
 def normalize_engagement(value: Any) -> float:
     """
-    Convert raw engagement into a deterministic 0-100 score.
+    Ham engagement değerini 0-100 aralığına dönüştürür.
 
-    Uses diminishing returns so very large raw values do not
-    immediately saturate the scoring engine.
+    Diminishing returns yaklaşımı kullanılır.
+    Böylece yüksek ham değerler doğrudan 100'e çarpmaz.
     """
     try:
         raw_value = float(value)
@@ -79,51 +76,178 @@ def normalize_engagement(value: Any) -> float:
 
 
 def normalize_post(post: Dict[str, Any]) -> Dict[str, Any]:
-'''
+    """
+    Tekil bir sinyali ortak veri modeline dönüştürür.
+    """
+    if not isinstance(post, dict):
+        return {}
 
-if anchor not in text:
-    raise SystemExit("normalize_post bulunamadı.")
+    # -----------------------------------------------------------------------
+    # Source
+    # -----------------------------------------------------------------------
 
-text = text.replace(anchor, helpers, 1)
+    source = normalize_source(post.get("source"))
 
+    # -----------------------------------------------------------------------
+    # Title / ID
+    # -----------------------------------------------------------------------
 
-# ------------------------------------------------------------
-# 3. Replace source normalization
-# ------------------------------------------------------------
+    title = str(post.get("title") or "").strip()
+    record_id = generate_id(source, title)
 
-old = '''source = str(post.get("source") or "").strip()
-    if not source:
-        source = "unknown"
-'''
+    # -----------------------------------------------------------------------
+    # Text
+    # -----------------------------------------------------------------------
 
-new = '''source = normalize_source(post.get("source"))
-'''
+    summary = str(
+        post.get("summary")
+        or post.get("content")
+        or post.get("description")
+        or ""
+    ).strip()
 
-if old not in text:
-    raise SystemExit("Source normalization bloğu bulunamadı.")
+    content = summary
 
-text = text.replace(old, new, 1)
+    # -----------------------------------------------------------------------
+    # Points / Engagement
+    # -----------------------------------------------------------------------
 
+    raw_points = post.get("points")
 
-# ------------------------------------------------------------
-# 4. Replace engagement assignment
-# ------------------------------------------------------------
+    if raw_points is None:
+        raw_points = post.get("score")
 
-old = '''    upvotes = points
-    engagement = points
-'''
+    if raw_points is None:
+        raw_points = post.get("upvotes")
 
-new = '''    upvotes = points
+    try:
+        points = int(raw_points) if raw_points is not None else 0
+    except (ValueError, TypeError):
+        points = 0
+
+    upvotes = points
     engagement = normalize_engagement(points)
+
+    # -----------------------------------------------------------------------
+    # Comments
+    # -----------------------------------------------------------------------
+
+    raw_comments = post.get("comments")
+
+    if raw_comments is None:
+        raw_comments = post.get("num_comments")
+
+    try:
+        comments = (
+            int(raw_comments)
+            if raw_comments is not None
+            else 0
+        )
+    except (ValueError, TypeError):
+        comments = 0
+
+    # -----------------------------------------------------------------------
+    # Other fields
+    # -----------------------------------------------------------------------
+
+    tags = post.get("tags")
+
+    if not isinstance(tags, list):
+        tags = []
+
+    category = str(
+        post.get("category") or "unknown"
+    ).strip()
+
+    language = str(
+        post.get("language") or "unknown"
+    ).strip()
+
+    url = str(
+        post.get("url") or ""
+    ).strip()
+
+    collected_at = str(
+        post.get("fetched_at")
+        or post.get("collected_at")
+        or datetime.now(timezone.utc).isoformat()
+    ).strip()
+
+    # -----------------------------------------------------------------------
+    # Canonical normalized record
+    # -----------------------------------------------------------------------
+
+    return {
+        "id": record_id,
+        "title": title,
+        "summary": summary,
+        "content": content,
+        "source": source,
+        "url": url,
+        "engagement": engagement,
+        "points": points,
+        "upvotes": upvotes,
+        "comments": comments,
+        "category": category,
+        "tags": tags,
+        "language": language,
+        "collected_at": collected_at,
+    }
+
+
+def remove_duplicates(
+    signals: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """
+    Aynı ID'ye sahip tekrarlı kayıtları temizler.
+    """
+    seen_ids = set()
+    unique_signals: List[Dict[str, Any]] = []
+
+    for post in signals:
+        if not isinstance(post, dict):
+            continue
+
+        post_id = post.get("id")
+
+        if not post_id:
+            source = normalize_source(post.get("source"))
+            title = str(
+                post.get("title") or ""
+            ).strip()
+
+            post_id = generate_id(source, title)
+
+        if post_id in seen_ids:
+            continue
+
+        seen_ids.add(post_id)
+        unique_signals.append(post)
+
+    return unique_signals
+
+
+def normalize_posts(
+    signals: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """
+    Tüm listeyi normalize eder ve duplicate kayıtları temizler.
+    """
+    normalized_signals: List[Dict[str, Any]] = []
+
+    for post in signals:
+        if not isinstance(post, dict):
+            continue
+
+        normalized = normalize_post(post)
+
+        if normalized:
+            normalized_signals.append(normalized)
+
+    return remove_duplicates(normalized_signals)
 '''
 
-if old not in text:
-    raise SystemExit("Engagement bloğu bulunamadı.")
+path.write_text(content, encoding="utf-8")
 
-text = text.replace(old, new, 1)
-
-
-path.write_text(text)
-
-print("Normalizer source canonicalization + engagement normalization eklendi.")
+print("engine/normalizer.py tamamen güncellendi.")
 PY
