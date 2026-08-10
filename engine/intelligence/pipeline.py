@@ -37,6 +37,7 @@ _ENGINES = (
     _category_engine,
     _score_engine,
     _confidence_engine,
+    _founder_fit_engine,
 )
 
 # Future engines:
