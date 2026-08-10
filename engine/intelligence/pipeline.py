@@ -17,6 +17,7 @@ from .category_engine import CategoryEngine
 from .score_engine import ScoreEngine
 from .confidence_engine import ConfidenceEngine
 from .founder_fit_engine import FounderFitEngine
+from .recommendation_engine import RecommendationEngine
 
 __all__ = [
     "analyze_signal",
@@ -31,18 +32,16 @@ _category_engine = CategoryEngine()
 _score_engine = ScoreEngine()
 _confidence_engine = ConfidenceEngine()
 _founder_fit_engine = FounderFitEngine()
-# TODO: _recommendation_engine = RecommendationEngine()
+_recommendation_engine = RecommendationEngine()
 
 _ENGINES = (
     _category_engine,
     _score_engine,
     _confidence_engine,
     _founder_fit_engine,
+    _recommendation_engine,
 )
 
-# Future engines:
-# - FounderFitEngine
-# - RecommendationEngine
 
 
 def analyze_signal(opportunity: Any) -> Any:
@@ -55,7 +54,7 @@ def analyze_signal(opportunity: Any) -> Any:
     2. ScoreEngine
     3. ConfidenceEngine
     4. FounderFitEngine
-    5. RecommendationEngine (TODO)
+    5. RecommendationEngine
 
     Parameters
     ----------
