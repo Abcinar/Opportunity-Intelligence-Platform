@@ -9,6 +9,7 @@ founder profile of the Opportunity Intelligence Platform (OIP).
 from __future__ import annotations
 
 from typing import Any
+import re
 
 from .base_engine import BaseEngine
 
@@ -134,13 +135,17 @@ class FounderFitEngine(BaseEngine):
         text: str,
         keywords: set[str],
     ) -> list[str]:
-        """Return detected keywords."""
+        """Return detected keywords using word-boundary matching."""
 
-        return sorted(
-            keyword
-            for keyword in keywords
-            if keyword in text
-        )
+        matches: list[str] = []
+
+        for keyword in keywords:
+            pattern = rf"(?<!\w){re.escape(keyword)}(?!\w)"
+
+            if re.search(pattern, text, flags=re.IGNORECASE):
+                matches.append(keyword)
+
+        return sorted(matches)
 
     @staticmethod
     def _calculate_score(
