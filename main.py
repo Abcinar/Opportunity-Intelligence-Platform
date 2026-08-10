@@ -25,9 +25,7 @@ from typing import Any, Dict, List
 
 from engine.collector import collect_signals
 from engine.normalizer import normalize_posts
-from engine.intelligence import analyze_signals
-from engine.scorer import calculate_score
-from engine.recommender import recommend
+from engine.intelligence.pipeline import analyze_signals
 from engine.exporter import (
     save_daily_signals,
     save_opportunities,
@@ -123,52 +121,26 @@ def run_intelligence(signals: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return enriched
 
 
-def run_scoring_and_recommendation(
-    signals: List[Dict[str, Any]],
-) -> List[Dict[str, Any]]:
-    """
-    Stages 4 & 5 – Score every signal and attach a recommendation.
-    Returns the list of fully processed opportunity records.
-    """
-    logger.info("Stage 4-5/6 – Scoring & recommending %d signals", len(signals))
-    start = time.perf_counter()
-    opportunities: List[Dict[str, Any]] = []
-
-    for signal in signals:
-        try:
-            score = calculate_score(signal)
-            rec = recommend(score)
-            opportunities.append(_build_opportunity_record(signal, score, rec))
-        except Exception as exc:
-            logger.exception(
-                "Failed to score signal %s: %s",
-                signal.get("id", "<unknown>"),
-                exc,
-            )
-
-    elapsed = (time.perf_counter() - start) * 1000
-    logger.info(
-        "Scored %d opportunities (%.1f ms)",
-        len(opportunities),
-        elapsed,
-    )
-    return opportunities
-
+# ---------------------------------------------------------------------------
+# Export stage
+# ---------------------------------------------------------------------------
 
 def run_export(
     daily_payload: Dict[str, Any],
     opportunities: List[Dict[str, Any]],
 ) -> None:
-    """Stage 6 – Persist daily signals and the opportunity list."""
+    """Stage 6 – Persist daily signals and opportunities."""
     logger.info("Stage 6/6 – Exporting results")
 
     if not isinstance(daily_payload, dict):
         raise ValueError("daily_payload must be a dict")
+
     if not isinstance(opportunities, list):
         raise ValueError("opportunities must be a list")
 
     save_daily_signals(daily_payload)
     save_opportunities(opportunities)
+
     logger.info(
         "Exported %d daily signals and %d opportunities",
         daily_payload.get("total_signals", 0),
@@ -187,7 +159,7 @@ def print_summary(
     """Print a concise human-readable summary of the run."""
     decisions: Dict[str, int] = {}
     for opp in opportunities:
-        decision = opp.get("recommendation", {}).get("decision", "UNKNOWN")
+        decision = opp.get("recommendation", {}).get("action", "UNKNOWN")
         decisions[decision] = decisions.get(decision, 0) + 1
 
     print("\n" + "=" * 60)
@@ -233,7 +205,9 @@ def main() -> int:
         enriched = run_intelligence(normalized)
 
         # 4 + 5. Score & recommend
-        opportunities = run_scoring_and_recommendation(enriched)
+        # Intelligence pipeline already produces:
+    # score, confidence, founder-fit and recommendation.
+        opportunities = enriched
 
         # 6. Export
         # Rebuild a clean daily-signals payload that includes the normalized list

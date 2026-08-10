@@ -12,7 +12,7 @@ from sources.betalists_fetcher import fetch_betalist
 from sources.reddit_fetcher import fetch_reddit_posts
 
 
-def test_source(name, func):
+def run_source(name, func):
     print("=" * 60)
     print(name)
 
@@ -30,19 +30,19 @@ def test_source(name, func):
 
 def main():
 
-    test_source("Hacker News", fetch_hacker_news)
+    run_source("Hacker News", fetch_hacker_news)
 
-    test_source("GitHub Trending", fetch_github_trending)
+    run_source("GitHub Trending", fetch_github_trending)
 
-    test_source("Google Trends", fetch_google_trends)
+    run_source("Google Trends", fetch_google_trends)
 
-    test_source("Lobsters", fetch_lobsters)
+    run_source("Lobsters", fetch_lobsters)
 
-    test_source("Product Hunt", fetch_producthunt)
+    run_source("Product Hunt", fetch_producthunt)
 
-    test_source("BetaList", fetch_betalist)
+    run_source("BetaList", fetch_betalist)
 
-    test_source("Reddit", fetch_reddit_posts)
+    run_source("Reddit", fetch_reddit_posts)
 
 
 if __name__ == "__main__":

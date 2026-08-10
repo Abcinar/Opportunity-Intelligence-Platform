@@ -1,17 +1,57 @@
-from engine.collector import collect_all_sources
-from engine.exporter import (
-    save_daily_signals,
-    load_daily_signals,
-)
+import json
 
-signals = collect_all_sources()
+from engine import exporter
 
-save_daily_signals(signals)
 
-loaded = load_daily_signals()
+def test_daily_signals_export_and_load(tmp_path, monkeypatch):
+    daily_file = tmp_path / "daily_signals.json"
 
-print()
+    monkeypatch.setattr(
+        exporter,
+        "DAILY_SIGNALS_FILE",
+        str(daily_file),
+    )
 
-print("Toplam:", loaded["total_signals"])
+    signals = [
+        {
+            "id": "test-001",
+            "title": "AI automation opportunity",
+            "source": "github",
+        },
+        {
+            "id": "test-002",
+            "title": "Project management opportunity",
+            "source": "hackernews",
+        },
+    ]
 
-print(loaded["sources"])
+    exporter.export_daily_signals(signals)
+
+    loaded = exporter.load_daily_signals()
+
+    assert loaded == signals
+    assert daily_file.exists()
+
+
+def test_daily_signals_file_contains_valid_json(tmp_path, monkeypatch):
+    daily_file = tmp_path / "daily_signals.json"
+
+    monkeypatch.setattr(
+        exporter,
+        "DAILY_SIGNALS_FILE",
+        str(daily_file),
+    )
+
+    signals = [
+        {
+            "id": "test-001",
+            "title": "AI automation opportunity",
+        }
+    ]
+
+    exporter.export_daily_signals(signals)
+
+    with open(daily_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data == signals

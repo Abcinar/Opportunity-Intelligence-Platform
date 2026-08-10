@@ -60,6 +60,11 @@ def export_daily_signals(signals: List[Dict[str, Any]]) -> None:
     _save_json(DAILY_SIGNALS_FILE, signals)
 
 
+def load_daily_signals() -> Any:
+    """Günlük sinyalleri (daily_signals.json) okur."""
+    return _load_json(DAILY_SIGNALS_FILE)
+
+
 def export_tracked_opportunities(tracked_data: List[Dict[str, Any]]) -> None:
     """
     Kullanıcının takibe aldığı (Tracked) fırsatları kaydeder.

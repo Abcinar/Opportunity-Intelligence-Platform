@@ -25,6 +25,11 @@ CATEGORY_RULES: dict[str, dict[str, list[str]]] = {
             "langgraph",
             "multi-agent",
         ],
+        "AI Automation": [
+            "ai automation",
+            "ai workflow",
+            "ai-powered automation",
+        ],
         "Generative AI": [
             "anthropic",
             "chatgpt",
@@ -149,6 +154,7 @@ CATEGORY_RULES: dict[str, dict[str, list[str]]] = {
             "clickup",
             "jira",
             "monday",
+            "project management",
             "trello",
         ],
         "Task Management": [
