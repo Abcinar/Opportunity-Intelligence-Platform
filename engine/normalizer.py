@@ -1,4 +1,3 @@
-cat > engine/normalizer.py <<'PY'
 """
 Opportunity Intelligence Platform
 Normalizer Engine v2
@@ -407,4 +406,3 @@ def normalize_posts(
     return remove_duplicates(
         normalized_signals
     )
-PY
