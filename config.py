@@ -11,6 +11,7 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 OPPORTUNITIES_FILE = os.path.join(DATA_DIR, "opportunities.json")
 DAILY_SIGNALS_FILE = os.path.join(DATA_DIR, "daily_signals.json")
 TRACKED_OPPORTUNITIES_FILE = os.path.join(DATA_DIR, "tracked_opportunities.json")
+SIGNAL_SNAPSHOTS_FILE = os.path.join(DATA_DIR, "signal_snapshots.json")
 
 # ==========================================
 # COLLECTOR ENGINE SETTINGS

@@ -27,7 +27,11 @@ from engine.exporter import (
 )
 
 
-def _clamp(value: float, minimum: float = 0.0, maximum: float = 100.0) -> float:
+def _clamp(
+    value: float,
+    minimum: float = 0.0,
+    maximum: float = 100.0,
+) -> float:
     """Değeri [0, 100] aralığında tutar."""
     return max(minimum, min(maximum, value))
 
@@ -61,7 +65,6 @@ def _calculate_momentum(
     İlk kez görülen sinyal:
         None
     """
-
     if previous_engagement <= 0:
         return None
 
@@ -79,9 +82,9 @@ def calculate_momentum(
     signals: List[Dict[str, Any]],
 ) -> List[Dict[str, Any]]:
     """
-    Tüm sinyaller için momentum hesaplar ve yeni snapshot oluşturur.
+    Tüm sinyaller için momentum hesaplar
+    ve yeni snapshot oluşturur.
     """
-
     if not isinstance(signals, list):
         raise ValueError("signals must be a list")
 
@@ -145,4 +148,3 @@ def calculate_momentum(
     save_signal_snapshots(new_snapshots)
 
     return signals
-PY
