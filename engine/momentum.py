@@ -1,4 +1,3 @@
-cat > engine/momentum.py <<'PY'
 """
 Momentum Engine
 ===============
