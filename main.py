@@ -1,6 +1,6 @@
 """
 Opportunity Intelligence Platform - Main Orchestration Layer
-============================================================
+=============================================================
 
 Production-ready entry point that wires the existing engine modules
 into a single deterministic pipeline.
@@ -11,12 +11,12 @@ Pipeline:
 2. normalize_posts()
 3. calculate_momentum()
 4. analyze_signals()
-5. export (daily signals + opportunities)
+5. export daily signals + opportunities
 
 Momentum is calculated before the Intelligence pipeline because
 ScoreEngine consumes the momentum metric.
 
-This file must never modify engine modules or invent new public APIs.
+This file must not modify engine modules or invent new public APIs.
 """
 
 from __future__ import annotations
@@ -52,16 +52,17 @@ logger = logging.getLogger("opportunity_intelligence_platform")
 
 
 # ---------------------------------------------------------------------------
-# Helpers
+# Validation
 # ---------------------------------------------------------------------------
 
 def _validate_signals(
     signals: List[Dict[str, Any]],
 ) -> List[Dict[str, Any]]:
     """
-    Ensure every item is a non-empty dict with at least an 'id' or 'title'.
+    Validate normalized signals.
 
-    Malformed records are dropped and a warning is logged.
+    A valid signal must be a dictionary and contain either
+    an id or a title.
     """
 
     valid: List[Dict[str, Any]] = []
@@ -87,13 +88,13 @@ def _validate_signals(
 
 
 # ---------------------------------------------------------------------------
-# Pipeline stages
+# Stage 1 - Collection
 # ---------------------------------------------------------------------------
 
 def run_collection() -> Dict[str, Any]:
-    """Stage 1 – Collect raw signals from all configured sources."""
+    """Stage 1 - Collect raw signals."""
 
-    logger.info("Stage 1/5 – Collecting signals")
+    logger.info("Stage 1/5 - Collecting signals")
 
     start = time.perf_counter()
 
@@ -111,13 +112,17 @@ def run_collection() -> Dict[str, Any]:
     return raw
 
 
+# ---------------------------------------------------------------------------
+# Stage 2 - Normalization
+# ---------------------------------------------------------------------------
+
 def run_normalization(
     posts: List[Dict[str, Any]],
 ) -> List[Dict[str, Any]]:
-    """Stage 2 – Normalize and de-duplicate signals."""
+    """Stage 2 - Normalize and deduplicate signals."""
 
     logger.info(
-        "Stage 2/5 – Normalizing %d posts",
+        "Stage 2/5 - Normalizing %d posts",
         len(posts),
     )
 
@@ -136,18 +141,22 @@ def run_normalization(
     return normalized
 
 
+# ---------------------------------------------------------------------------
+# Stage 3 - Momentum
+# ---------------------------------------------------------------------------
+
 def run_momentum(
     signals: List[Dict[str, Any]],
 ) -> List[Dict[str, Any]]:
     """
-    Stage 3 – Calculate momentum from historical signal snapshots.
+    Stage 3 - Calculate momentum.
 
-    Momentum compares current engagement against the previous snapshot
-    for the same signal ID.
+    Momentum compares current engagement against the previous
+    snapshot for the same signal ID.
     """
 
     logger.info(
-        "Stage 3/5 – Calculating momentum for %d signals",
+        "Stage 3/5 - Calculating momentum for %d signals",
         len(signals),
     )
 
@@ -165,22 +174,26 @@ def run_momentum(
     return enriched
 
 
+# ---------------------------------------------------------------------------
+# Stage 4 - Intelligence
+# ---------------------------------------------------------------------------
+
 def run_intelligence(
     signals: List[Dict[str, Any]],
 ) -> List[Dict[str, Any]]:
     """
-    Stage 4 – Run the rule-based Intelligence pipeline.
+    Stage 4 - Run the Intelligence pipeline.
 
-    The Intelligence pipeline is responsible for:
+    The Intelligence pipeline handles:
     - category
-    - score
+    - opportunity score
     - confidence
     - founder fit
     - recommendation
     """
 
     logger.info(
-        "Stage 4/5 – Analyzing %d signals",
+        "Stage 4/5 - Analyzing %d signals",
         len(signals),
     )
 
@@ -199,16 +212,16 @@ def run_intelligence(
 
 
 # ---------------------------------------------------------------------------
-# Export stage
+# Stage 5 - Export
 # ---------------------------------------------------------------------------
 
 def run_export(
     daily_payload: Dict[str, Any],
     opportunities: List[Dict[str, Any]],
 ) -> None:
-    """Stage 5 – Persist daily signals and opportunities."""
+    """Stage 5 - Persist daily signals and opportunities."""
 
-    logger.info("Stage 5/5 – Exporting results")
+    logger.info("Stage 5/5 - Exporting results")
 
     if not isinstance(daily_payload, dict):
         raise ValueError("daily_payload must be a dict")
@@ -227,14 +240,14 @@ def run_export(
 
 
 # ---------------------------------------------------------------------------
-# Console summary
+# Summary
 # ---------------------------------------------------------------------------
 
 def print_summary(
     opportunities: List[Dict[str, Any]],
     total_runtime_ms: float,
 ) -> None:
-    """Print a concise human-readable summary of the run."""
+    """Print a concise run summary."""
 
     decisions: Dict[str, int] = {}
 
@@ -254,8 +267,9 @@ def print_summary(
 
         decisions[decision] = decisions.get(decision, 0) + 1
 
-    print("\n" + "=" * 60)
-    print("  AI OPPORTUNITY HUNTER – RUN SUMMARY")
+    print()
+    print("=" * 60)
+    print("  AI OPPORTUNITY HUNTER - RUN SUMMARY")
     print("=" * 60)
 
     print(
@@ -276,20 +290,19 @@ def print_summary(
             f"    {decision:12s} : {count}"
         )
 
-    print("=" * 60 + "\n")
+    print("=" * 60)
+    print()
 
 
 # ---------------------------------------------------------------------------
-# Main entry point
+# Main
 # ---------------------------------------------------------------------------
 
 def main() -> int:
     """
-    Orchestrate the full pipeline end-to-end.
+    Run the complete Opportunity Intelligence Platform pipeline.
 
-    Returns
-    -------
-    int
+    Returns:
         0 = success
         1 = failure
         130 = interrupted by user
@@ -303,9 +316,9 @@ def main() -> int:
 
     try:
 
-        # ================================================================
-        # 1. Collect
-        # ================================================================
+        # ==============================================================
+        # Stage 1 - Collect
+        # ==============================================================
 
         raw = run_collection()
 
@@ -313,13 +326,13 @@ def main() -> int:
 
         if not posts:
             logger.warning(
-                "No posts returned from collectors – exiting early"
+                "No posts returned from collectors - exiting early"
             )
             return 0
 
-        # ================================================================
-        # 2. Normalize
-        # ================================================================
+        # ==============================================================
+        # Stage 2 - Normalize
+        # ==============================================================
 
         normalized = run_normalization(posts)
 
@@ -327,34 +340,27 @@ def main() -> int:
 
         if not normalized:
             logger.warning(
-                "No valid signals after normalization – exiting"
+                "No valid signals after normalization - exiting"
             )
             return 0
 
-        # ================================================================
-        # 3. Momentum
-        # ================================================================
+        # ==============================================================
+        # Stage 3 - Momentum
+        # ==============================================================
 
         momentum_signals = run_momentum(normalized)
 
-        # ================================================================
-        # 4. Intelligence
-        # ================================================================
+        # ==============================================================
+        # Stage 4 - Intelligence
+        # ==============================================================
 
-        enriched = run_intelligence(momentum_signals)
+        opportunities = run_intelligence(
+            momentum_signals
+        )
 
-        # Intelligence pipeline already produces:
-        # - category
-        # - opportunity score
-        # - confidence
-        # - founder fit
-        # - recommendation
-
-        opportunities = enriched
-
-        # ================================================================
-        # 5. Export
-        # ================================================================
+        # ==============================================================
+        # Stage 5 - Export
+        # ==============================================================
 
         daily_payload = {
             "fetched_at": raw.get("fetched_at"),
@@ -368,9 +374,9 @@ def main() -> int:
             opportunities,
         )
 
-        # ================================================================
+        # ==============================================================
         # Summary
-        # ================================================================
+        # ==============================================================
 
         total_ms = (
             time.perf_counter() - pipeline_start
