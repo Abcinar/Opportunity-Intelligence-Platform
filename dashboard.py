@@ -217,11 +217,15 @@ def normalize_record(rec: Dict[str, Any]) -> Dict[str, Any]:
     score_block = rec.get("score") if isinstance(rec.get("score"), dict) else {}
 
     score = _safe_float(
-        score_block.get("overall_score")
+        rec.get("opportunity_score")
+        if rec.get("opportunity_score") is not None
+        else score_block.get("overall_score")
     )
 
     confidence = _safe_float(
-        score_block.get("confidence")
+        rec.get("confidence")
+        if rec.get("confidence") is not None
+        else score_block.get("confidence")
     )
 
     engagement = _safe_float(

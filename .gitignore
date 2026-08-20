@@ -28,3 +28,12 @@ Thumbs.db
 daily_signals.json
 *.log
 .cache/
+
+# Local AI / agent workspace
+.agents/
+
+# Local backups
+dashboard.py.backup-*
+
+# Local AI notes
+grok.txt

@@ -1,12 +1,182 @@
 [
     {
-        "id": "test-1",
-        "engagement": 100.0,
-        "captured_at": "2026-08-11T07:06:31.537078+00:00"
+        "id": "066923c967819fda9ebbda16299c7dd7",
+        "engagement": 81.62,
+        "captured_at": "2026-08-20T10:07:05.249277+00:00"
     },
     {
-        "id": "test-2",
-        "engagement": 200.0,
-        "captured_at": "2026-08-11T07:06:31.537094+00:00"
+        "id": "4109a1e7938400c8da92fc6efe8c2683",
+        "engagement": 79.11,
+        "captured_at": "2026-08-20T10:07:05.249289+00:00"
+    },
+    {
+        "id": "dbb0b03cc28a0430898b473b134ff465",
+        "engagement": 64.44,
+        "captured_at": "2026-08-20T10:07:05.249293+00:00"
+    },
+    {
+        "id": "b21b0f6689f7fd165fa01bbc8497e56d",
+        "engagement": 62.74,
+        "captured_at": "2026-08-20T10:07:05.249295+00:00"
+    },
+    {
+        "id": "25cd6ba971e2046041e7d4e58b81115b",
+        "engagement": 61.66,
+        "captured_at": "2026-08-20T10:07:05.249297+00:00"
+    },
+    {
+        "id": "f6d1a517498fe39038d66207f332e1c1",
+        "engagement": 61.39,
+        "captured_at": "2026-08-20T10:07:05.249299+00:00"
+    },
+    {
+        "id": "87411d2864cac991a03c3673c4fa86cc",
+        "engagement": 60.51,
+        "captured_at": "2026-08-20T10:07:05.249301+00:00"
+    },
+    {
+        "id": "45d307dd30669822d907390640441362",
+        "engagement": 56.56,
+        "captured_at": "2026-08-20T10:07:05.249302+00:00"
+    },
+    {
+        "id": "101fe82fad58d8b7062a1cad8d538e22",
+        "engagement": 56.18,
+        "captured_at": "2026-08-20T10:07:05.249303+00:00"
+    },
+    {
+        "id": "e0e736160fc559252b1f008f31f8392a",
+        "engagement": 55.99,
+        "captured_at": "2026-08-20T10:07:05.249305+00:00"
+    },
+    {
+        "id": "e5413d416ca636eeaa06024e576e6534",
+        "engagement": 54.79,
+        "captured_at": "2026-08-20T10:07:05.249307+00:00"
+    },
+    {
+        "id": "b938d20059c8dcc73f9b2e80c83c73c2",
+        "engagement": 53.05,
+        "captured_at": "2026-08-20T10:07:05.249308+00:00"
+    },
+    {
+        "id": "1fd9fc90fa92fe947226a02e90c7dc2e",
+        "engagement": 52.7,
+        "captured_at": "2026-08-20T10:07:05.249310+00:00"
+    },
+    {
+        "id": "e4881dd5fa9d6fc33d6b810a147e21a0",
+        "engagement": 48.56,
+        "captured_at": "2026-08-20T10:07:05.249311+00:00"
+    },
+    {
+        "id": "adbbfa181c517264a0669d7be9a66d6b",
+        "engagement": 38.35,
+        "captured_at": "2026-08-20T10:07:05.249313+00:00"
+    },
+    {
+        "id": "f143ecf212dd4c5fe50d42e2d053e2eb",
+        "engagement": 35.15,
+        "captured_at": "2026-08-20T10:07:05.249314+00:00"
+    },
+    {
+        "id": "7168112c625bb048c7483f3d15ac0002",
+        "engagement": 30.46,
+        "captured_at": "2026-08-20T10:07:05.249316+00:00"
+    },
+    {
+        "id": "bd8a79b8fc426d675813cc4f89e881b5",
+        "engagement": 29.68,
+        "captured_at": "2026-08-20T10:07:05.249318+00:00"
+    },
+    {
+        "id": "1ac97bb48b2d48b1936d199a046554bd",
+        "engagement": 28.37,
+        "captured_at": "2026-08-20T10:07:05.249319+00:00"
+    },
+    {
+        "id": "48c05089c5249770ebeae4804a4dbf13",
+        "engagement": 25.71,
+        "captured_at": "2026-08-20T10:07:05.249321+00:00"
+    },
+    {
+        "id": "4f33ce46a0daf1af87ffe0edc3d04739",
+        "engagement": 23.31,
+        "captured_at": "2026-08-20T10:07:05.249326+00:00"
+    },
+    {
+        "id": "05ccae0a33dd5387987284b5e16e9e50",
+        "engagement": 23.08,
+        "captured_at": "2026-08-20T10:07:05.249327+00:00"
+    },
+    {
+        "id": "5b04168f6c0e30755266b182f6b3bb19",
+        "engagement": 20.76,
+        "captured_at": "2026-08-20T10:07:05.249329+00:00"
+    },
+    {
+        "id": "2761ef044a87b08d1fd316f3e3bff5ce",
+        "engagement": 17.9,
+        "captured_at": "2026-08-20T10:07:05.249330+00:00"
+    },
+    {
+        "id": "889afd461d1a154d4f40edb9648dfc60",
+        "engagement": 13.79,
+        "captured_at": "2026-08-20T10:07:05.249331+00:00"
+    },
+    {
+        "id": "878ed3d80769d651aaa3f3dae8140f0f",
+        "engagement": 12.43,
+        "captured_at": "2026-08-20T10:07:05.249333+00:00"
+    },
+    {
+        "id": "6b31fe0930b8eaa9f12c6aadef1db772",
+        "engagement": 11.82,
+        "captured_at": "2026-08-20T10:07:05.249335+00:00"
+    },
+    {
+        "id": "4c424a33b660af271955fcc8bbf77fe4",
+        "engagement": 9.09,
+        "captured_at": "2026-08-20T10:07:05.249336+00:00"
+    },
+    {
+        "id": "14a3aa352f41b6f6276d852524bef437",
+        "engagement": 8.76,
+        "captured_at": "2026-08-20T10:07:05.249338+00:00"
+    },
+    {
+        "id": "b681432bd84ddda14501b13f2620ebb9",
+        "engagement": 6.02,
+        "captured_at": "2026-08-20T10:07:05.249339+00:00"
+    },
+    {
+        "id": "f276543e044e37c3bad5fed12a6f179f",
+        "engagement": 2.15,
+        "captured_at": "2026-08-20T10:07:05.249341+00:00"
+    },
+    {
+        "id": "37667344e839e9674ba0e0360d820315",
+        "engagement": 1.57,
+        "captured_at": "2026-08-20T10:07:05.249343+00:00"
+    },
+    {
+        "id": "acfc422d4852efe739ed29595531edb3",
+        "engagement": 1.19,
+        "captured_at": "2026-08-20T10:07:05.249344+00:00"
+    },
+    {
+        "id": "0e92cca0fa4a8e437c8bb86dd1349cc4",
+        "engagement": 1.19,
+        "captured_at": "2026-08-20T10:07:05.249345+00:00"
+    },
+    {
+        "id": "6db9f761cbb22154e168ec6ba65caeb7",
+        "engagement": 0.99,
+        "captured_at": "2026-08-20T10:07:05.249347+00:00"
+    },
+    {
+        "id": "36788b1a92fc076c2e1eba1ffdb0844f",
+        "engagement": 0.6,
+        "captured_at": "2026-08-20T10:07:05.249348+00:00"
     }
 ]
